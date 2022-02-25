@@ -37,7 +37,8 @@ class OtrToSrt:
                 self.parsed[n]['end'] = time
                 break
             elif not sub:
-                raise SyntaxError(f'Line {num+1} has no text.\n\nExiting...')
+                pass
+                # raise SyntaxError(f'Line {num+1} has no text.\n\nExiting...')
 
             if len(re.split(r'^([0-9]{1}:[0-9]{2}:[0-9]{2}|[0-9]{2}:[0-9]{2})', sub)) > 1:
                 raise SyntaxError(f'On line {num+1},\nthere is a time code '
