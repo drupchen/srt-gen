@@ -44,21 +44,35 @@ def gen_translated(trans, srt):
     return out
 
 
-def parse(trans_file, srt_file, mode='parse'):
+def parse(trans_file, srt_file, mode='parse', format=None):
     trans = Path(trans_file).read_text().strip().split('\n')
     srt = load_srt(srt_file)
+    if format == 'both_on_same_line':
+        lines = trans_file.read_text().strip().split('\n')
+        srt = load_srt(srt_file)
+        for n, line in enumerate(lines):
+            words = line.split(' ')
+            orig_len = len(srt[n][2].split(' '))
+            words = words[orig_len:]
+            lines[n] = ' '.join(words)
+        out = trans_file.parent / (trans_file.stem + '_cleaned.txt')
+        out.write_text('\n'.join(lines))
+        exit()
+
     if mode == 'check':
         to_check = gen_to_check(trans, srt)
-        out_file = srt_file.parent / (srt_file.stem + '_tocheck.srt')
+        out_file = trans_file.parent / (trans_file.stem + '_tocheck.srt')
         out_file.write_text(to_check)
     else:
         out = gen_translated(trans, srt)
-        out_file = srt_file.parent / (srt_file.stem + '_translated.srt')
+        out_file = trans_file.parent / (trans_file.stem + '_translated.srt')
         out_file.write_text(out)
 
 
 if __name__ == '__main__':
-    trans = Path('data/add_timestamps/situ_rinpoche_losar2022_trad.txt')
+    trans = Path('data/add_timestamps/Tibetan New Year Message_English_Vietnamese_txt_cleaned.txt')
     srt = Path('data/add_timestamps/situ_rinpoche_losar2022.srt')
     mode = 'parse'
-    parse(trans, srt, mode=mode)
+    # format = 'both_on_same_line'
+    format = ''
+    parse(trans, srt, mode=mode, format=format)
